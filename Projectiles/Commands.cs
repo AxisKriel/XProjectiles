@@ -26,6 +26,8 @@ namespace Projectiles
 			float speedX = 8f * e.Player.TPlayer.direction;
 			float speedY = 0f;
 			int damage = 1;
+			int owner = 255;
+			float knockback = 0f;
 			uint count = 1;
 
 			OptionSet o = new OptionSet
@@ -36,6 +38,8 @@ namespace Projectiles
 				{ "X|speedX=", v => Single.TryParse(v, out speedX) },
 				{ "Y|speedY=", v => Single.TryParse(v, out speedY) },
 				{ "d|dmg|damage=", v => Int32.TryParse(v, out damage) },
+				{ "o|owner=", v => Int32.TryParse(v, out owner) },
+				{ "k|knockback=", v => Single.TryParse(v, out knockback) },
 				{ "c|count=", v => UInt32.TryParse(v, out count) }
 			};
 
@@ -52,7 +56,7 @@ namespace Projectiles
 				e.Player.SendErrorMessage("Invalid projectile count!");
 			else if (count == 1)
 			{
-				int proj = Projectile.NewProjectile(x, y, speedX, speedY, type, damage, 0f);
+				int proj = Projectile.NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
 				e.Player.SendInfoMessage($"[{proj}] Spawned {type} @ ({x},{y}).");
 			}
 			else
@@ -60,16 +64,16 @@ namespace Projectiles
 				uint total = count;
 
 				// Initial projectile
-				Projectile.NewProjectile(x, y, speedX, speedY, type, damage, 0f);
+				Projectile.NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
 
 				// Spawn further projectiles above and below the initial point, alternating
 				for (int i = 32; count > 0; i = i + 32)
 				{
-					Projectile.NewProjectile(x, y - i, speedX, speedY, type, damage, 0f);
+					Projectile.NewProjectile(x, y - i, speedX, speedY, type, damage, knockback, owner);
 					count--;
 					if (count > 0)
 					{
-						Projectile.NewProjectile(x, y + i, speedX, speedY, type, damage, 0f);
+						Projectile.NewProjectile(x, y + i, speedX, speedY, type, damage, knockback, owner);
 						count--;
 					}
 				}
