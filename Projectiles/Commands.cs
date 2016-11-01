@@ -23,7 +23,7 @@ namespace Projectiles
 			int type = ProjectileID.JestersArrow;
 			float x = e.Player.X + 1f;
 			float y = e.Player.Y;
-			float speedX = 8f;
+			float speedX = 8f * e.Player.TPlayer.direction;
 			float speedY = 0f;
 			int damage = 1;
 

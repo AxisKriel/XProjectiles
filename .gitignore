@@ -2,3 +2,4 @@ packages/
 *.userprefs
 bin/
 obj/
+.vs/
