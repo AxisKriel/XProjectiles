@@ -26,7 +26,7 @@ namespace Projectiles
 			float speedX = 8f * e.Player.TPlayer.direction;
 			float speedY = 0f;
 			int damage = 1;
-			int owner = 255;
+			int owner = e.Player.Index;
 			float knockback = 0f;
 			uint count = 1;
 
