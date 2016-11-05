@@ -21,6 +21,8 @@ namespace Projectiles
 		private float knockback;
 		private int owner;
 
+		private float[] ai = new float[2];
+
 		public int Index { get; set; }
 
 		public Vector2 Position { get { return new Vector2(x, y); } }
@@ -45,11 +47,11 @@ namespace Projectiles
 			set { knockback = value; }
 		}
 
-		public TSPlayer Owner { get { return TShock.Players[owner]; } }
+		public TSPlayer Owner { get { return owner >= 255 ? TSPlayer.Server : TShock.Players[owner]; } }
 
-		public int Ai0 { get; set; }
+		public int Ai0 { get { return (int)ai[0]; } }
 
-		public int Ai1 { get; set; }
+		public int Ai1 { get { return (int)ai[1]; } }
 
 		public Projectile TProjectile { get { return Index > -1 ? Main.projectile[Index] : null; } }
 
@@ -72,8 +74,8 @@ namespace Projectiles
 
 			this.owner = owner;
 
-			Ai0 = ai0;
-			Ai1 = ai1;
+			this.ai[0] = ai0;
+			this.ai[1] = ai1;
 		}
 
 		/// <summary>
@@ -81,24 +83,21 @@ namespace Projectiles
 		/// </summary>
 		/// <param name="args">A list of arguments to parse.</param>
 		/// <param name="parsed">Unparsed arguments are outputted here (example: projectile count).</param>
-		public XProjectile Parse(IEnumerable<string> args, out List<string> parsed)
+		public List<string> Parse(IEnumerable<string> args)
 		{
-			XProjectile proj = new XProjectile();
-
-			OptionSet o = new OptionSet
+			return new OptionSet
 			{
-				{ "t|type=", v => Int32.TryParse(v, out proj.type) },
-				{ "x|posX=", v => Single.TryParse(v, out proj.x) },
-				{ "y|posY=", v => Single.TryParse(v, out proj.y) },
-				{ "X|speedX=", v => Single.TryParse(v, out proj.speedX) },
-				{ "Y|speedY=", v => Single.TryParse(v, out proj.speedY) },
-				{ "d|dmg|damage=", v => Int32.TryParse(v, out proj.damage) },
-				{ "o|owner=", v => Int32.TryParse(v, out proj.owner) },
-				{ "k|knockback=", v => Single.TryParse(v, out proj.knockback) }
-			};
-
-			parsed = o.Parse(args);
-			return proj;
+				{ "t|type=", v => Int32.TryParse(v, out type) },
+				{ "x|posX=", v => Single.TryParse(v, out x) },
+				{ "y|posY=", v => Single.TryParse(v, out y) },
+				{ "X|speedX=", v => Single.TryParse(v, out speedX) },
+				{ "Y|speedY=", v => Single.TryParse(v, out speedY) },
+				{ "d|dmg|damage=", v => Int32.TryParse(v, out damage) },
+				{ "o|owner=", v => Int32.TryParse(v, out owner) },
+				{ "k|knockback=", v => Single.TryParse(v, out knockback) },
+				{ "a0|ai|ai0=", v => Single.TryParse(v, out ai[0]) },
+				{ "a1|ai1=", v => Single.TryParse(v, out ai[1]) }
+			}.Parse(args);
 		}
 
 		/// <summary>
@@ -108,6 +107,17 @@ namespace Projectiles
 		public int Spawn()
 		{
 			Index = Utils.NewProjectile(this);
+			return Index;
+		}
+
+		/// <summary>
+		/// Spawn this projectile isntance into the world at the specified coordinates.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		public int Spawn(float x, float y)
+		{
+			Index = Utils.NewProjectile(this, new Vector2(x, y));
 			return Index;
 		}
 

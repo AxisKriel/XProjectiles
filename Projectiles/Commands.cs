@@ -31,11 +31,8 @@ namespace Projectiles
 				           0f,
 				           e.Player.Index);
 
-
-			List<string> parsed;
-
 			// Parse parameters
-			proj.Parse(e.Parameters, out parsed);
+			List<string> parsed = proj.Parse(e.Parameters);
 
 			// Number of projectiles to spawn
 			uint count = 1;
@@ -57,7 +54,7 @@ namespace Projectiles
 				proj.Spawn();
 
 				if (!e.Silent)
-					e.Player.SendInfoMessage($"[{proj}] Spawned {proj.Type} @ ({proj.Position.X},{proj.Position.Y}).");
+					e.Player.SendInfoMessage($"[{proj.Index}] Spawned {proj.Type} @ ({proj.Position.X},{proj.Position.Y}).");
 			}
 			else
 			{
@@ -68,13 +65,13 @@ namespace Projectiles
 				count--;
 
 				// Spawn further projectiles above and below the initial point, alternating
-				for (int i = 32; count > 0; i = i + 32)
+				for (int i = 1; count > 0; i++)
 				{
-					proj.Spawn();
+					proj.Spawn(proj.Position.X, proj.Position.Y + (32 * i));
 					count--;
 					if (count > 0)
 					{
-						proj.Spawn();
+						proj.Spawn(proj.Position.X, proj.Position.Y - (32 * i));
 						count--;
 					}
 				}

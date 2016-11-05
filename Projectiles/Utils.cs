@@ -24,6 +24,24 @@ namespace Projectiles
 				projectile.Ai1);
 		}
 
+		public static int NewProjectile(XProjectile projectile, Vector2 position)
+		{
+			if (projectile.Owner == null)
+				return -1;
+
+			return NewProjectile(
+				position.X,
+				position.Y,
+				projectile.Speed.X,
+				projectile.Speed.Y,
+				projectile.Type,
+				projectile.Damage,
+				projectile.KnockBack,
+				projectile.Owner.Index,
+				projectile.Ai0,
+				projectile.Ai1); 
+		}
+
 		public static int NewProjectile(float x, float y, float speedX, float speedY, int type, int damage, float knockback, int owner = 255, int ai0 = 0, int ai1 = 0)
 		{
 			// Copied from TerrariaServerAPI with slight modifications
