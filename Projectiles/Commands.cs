@@ -56,28 +56,32 @@ namespace Projectiles
 				e.Player.SendErrorMessage("Invalid projectile count!");
 			else if (count == 1)
 			{
-				int proj = Projectile.NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
-				e.Player.SendInfoMessage($"[{proj}] Spawned {type} @ ({x},{y}).");
+				int proj = NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
+
+				if (!e.Silent)
+					e.Player.SendInfoMessage($"[{proj}] Spawned {type} @ ({x},{y}).");
 			}
 			else
 			{
 				uint total = count;
 
 				// Initial projectile
-				Projectile.NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
+				NewProjectile(x, y, speedX, speedY, type, damage, knockback, owner);
 
 				// Spawn further projectiles above and below the initial point, alternating
 				for (int i = 32; count > 0; i = i + 32)
 				{
-					Projectile.NewProjectile(x, y - i, speedX, speedY, type, damage, knockback, owner);
+					NewProjectile(x, y - i, speedX, speedY, type, damage, knockback, owner);
 					count--;
 					if (count > 0)
 					{
-						Projectile.NewProjectile(x, y + i, speedX, speedY, type, damage, knockback, owner);
+						NewProjectile(x, y + i, speedX, speedY, type, damage, knockback, owner);
 						count--;
 					}
 				}
-				e.Player.SendInfoMessage($"Spawned {total} projectiles of type {type}.");
+
+				if (!e.Silent)
+					e.Player.SendInfoMessage($"Spawned {total} projectiles of type {type}.");
 			}
 		}
 	}
