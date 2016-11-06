@@ -6,6 +6,22 @@ namespace Projectiles
 {
 	public class Utils
 	{
+		public static Color? ColorFromRGB(string value)
+		{
+			if (String.IsNullOrWhiteSpace(value))
+				return null;
+
+			string[] rgb = value.Split(',');
+			if (rgb.Length < 3)
+				return null;
+
+			int[] parsed = new int[3];
+			for (int i = 0; i < 3; i++)
+				Int32.TryParse(rgb[i], out parsed[i]);
+
+			return new Color(parsed[0], parsed[1], parsed[2]);
+		}
+
 		public static int NewProjectile(XProjectile projectile)
 		{
 			if (projectile.Owner == null)

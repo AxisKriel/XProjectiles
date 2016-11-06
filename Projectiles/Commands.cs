@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using NDesk.Options;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Projectiles
 {
@@ -16,6 +17,210 @@ namespace Projectiles
 				AllowServer = false,
 				HelpText = "Commands for spawning projectiles."
 			});
+
+			Commands.ChatCommands.Add(new Command("items.tweak", doAlter, "tweak", "alter")
+			{
+				AllowServer = false,
+				HelpText = "Commands for tweaking item properties."
+			});
+		}
+
+		void doAlter(CommandArgs e)
+		{
+			if (e.Parameters.Count < 1)
+			{
+				e.Player.SendInfoMessage($"Syntax: {Commands.Specifier}tweak <item> [flags]");
+				return;
+			}
+
+			// if set, will alter currently existing item instead of spawning a new one
+			short index = -1;
+
+			string colorHex = "", damage = "", knockback = "", useAnimation = "", useTime = "", shoot = "",
+				shootSpeed = "", width = "", height = "", scale = "", ammo = "", useAmmo = "", notAmmo = "";
+
+			OptionSet o = new OptionSet
+			{
+				{ "i|index=", v => Int16.TryParse(v, out index) },
+				{ "c|color=", v => colorHex = v },
+				{ "d|dmg|damage=", v => damage = v },
+				{ "k|knock|knockback=", v => knockback = v },
+				{ "u|uA|useAnimation=", v => useAnimation = v },
+				{ "t|uT|useTime=", v => useTime = v },
+				{ "s|shoot=", v => shoot = v },
+				{ "ss|sspeed|shootSpeed=", v => shootSpeed = v },
+				{ "w|width=", v => width = v },
+				{ "h|height=", v => height = v },
+				{ "sc|scale=", v => scale = v },
+				{ "a|ammo=", v => ammo = v },
+				{ "ua|useAmmo=", v => useAmmo = v },
+				{ "n|na|notAmmo:", v => notAmmo = String.IsNullOrWhiteSpace(v) ? "true" : v }
+			};
+
+			List<string> parsed = o.Parse(e.Parameters);
+
+			if (parsed.Count > 0 && index == -1)
+			{
+				List<Item> items = TShock.Utils.GetItemByIdOrName(String.Join(" ", parsed));
+				if (items?.Count > 1)
+				{
+					TShock.Utils.SendMultipleMatchError(e.Player, items.Select(i => i.name));
+					return;
+				}
+				else if (items == null || items.Count < 0)
+				{
+					e.Player.SendErrorMessage("Invalid item!");
+					return;
+				}
+					
+				index = (short)Item.NewItem(
+					(int)e.Player.X,
+					(int)e.Player.Y,
+					items[0].width,
+					items[0].height,
+					items[0].type,
+					items[0].stack);
+			}
+
+			Item target = Main.item[index];
+
+			byte flags = 0;
+
+			if (!String.IsNullOrWhiteSpace(colorHex))
+			{
+				var color = Utils.ColorFromRGB(colorHex);
+				if (color.HasValue)
+				{
+					target.color = color.Value;
+					flags |= 1;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(damage))
+			{
+				int pDamage;
+				if (Int32.TryParse(damage, out pDamage))
+				{
+					target.damage = pDamage;
+					flags |= 2;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(knockback))
+			{
+				float pKnockback;
+				if (Single.TryParse(knockback, out pKnockback))
+				{
+					target.knockBack = pKnockback;
+					flags |= 4;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(useAnimation))
+			{
+				int uA;
+				if (Int32.TryParse(useAnimation, out uA))
+				{
+					target.useAnimation = uA;
+					flags |= 8;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(useTime))
+			{
+				int uT;
+				if (Int32.TryParse(useTime, out uT))
+				{
+					target.useTime = uT;
+					flags |= 16;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(shoot))
+			{
+				int pShoot;
+				if (Int32.TryParse(shoot, out pShoot))
+				{
+					target.shoot = pShoot;
+					flags |= 32;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(shootSpeed))
+			{
+				float pShootSpeed;
+				if (Single.TryParse(shootSpeed, out pShootSpeed))
+				{
+					target.shootSpeed = pShootSpeed;
+					flags |= 64;
+				}
+			}
+
+			byte flags2 = 0;
+
+			if (!String.IsNullOrWhiteSpace(width))
+			{
+				int pWidth;
+				if (Int32.TryParse(width, out pWidth))
+				{
+					target.width = pWidth;
+					flags2 |= 1;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(height))
+			{
+				int pHeight;
+				if (Int32.TryParse(height, out pHeight))
+				{
+					target.height = pHeight;
+					flags2 |= 2;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(scale))
+			{
+				float pScale;
+				if (Single.TryParse(scale, out pScale))
+				{
+					target.scale = pScale;
+					flags2 |= 4;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(ammo))
+			{
+				int pAmmo;
+				if (Int32.TryParse(ammo, out pAmmo))
+				{
+					target.ammo = pAmmo;
+					flags2 |= 8;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(useAmmo))
+			{
+				int uAmmo;
+				if (Int32.TryParse(useAmmo, out uAmmo))
+				{
+					target.useAmmo = uAmmo;
+					flags2 |= 16;
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(notAmmo))
+			{
+				bool nAmmo;
+				if (Boolean.TryParse(notAmmo, out nAmmo))
+				{
+					target.notAmmo = nAmmo;
+					flags2 |= 32;
+				}
+			}
+
+			TSPlayer.All.SendData(PacketTypes.TweakItem, "", index, flags, flags2);
+			if (!e.Silent)
+				e.Player.SendSuccessMessage("Tweaked an item according to your input. ({0})", e.Message);
 		}
 
 		void doProj(CommandArgs e)
