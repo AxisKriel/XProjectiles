@@ -1,9 +1,9 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using TShockAPI;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using NDesk.Options;
+using Terraria;
+using TShockAPI;
 
 namespace Projectiles
 {

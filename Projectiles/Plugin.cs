@@ -1,8 +1,6 @@
 ﻿using System;
-using TShockAPI;
-using TerrariaApi.Server;
 using Terraria;
-using Terraria.ID;
+using TerrariaApi.Server;
 
 namespace Projectiles
 {
@@ -12,7 +10,7 @@ namespace Projectiles
 		3. Alter projectile damage
 	*/
 
-	[ApiVersion(1, 25)]
+	[ApiVersion(2, 0)]
 	public partial class Plugin : TerrariaPlugin
 	{
 		public override string Author
