@@ -10,7 +10,7 @@ namespace Projectiles
 		3. Alter projectile damage
 	*/
 
-	[ApiVersion(2, 0)]
+	[ApiVersion(2, 1)]
 	public partial class Plugin : TerrariaPlugin
 	{
 		public override string Author

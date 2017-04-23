@@ -64,7 +64,7 @@ namespace Projectiles
 				List<Item> items = TShock.Utils.GetItemByIdOrName(String.Join(" ", parsed));
 				if (items?.Count > 1)
 				{
-					TShock.Utils.SendMultipleMatchError(e.Player, items.Select(i => i.name));
+					TShock.Utils.SendMultipleMatchError(e.Player, items.Select(i => i.Name));
 					return;
 				}
 				else if (items == null || items.Count < 0)

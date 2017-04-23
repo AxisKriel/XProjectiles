@@ -149,7 +149,7 @@ namespace Projectiles
 			}
 
 			// Always send the projectile data
-			NetMessage.SendData(27, -1, -1, "", num, 0f, 0f, 0f, 0, 0, 0);
+			NetMessage.SendData(27, -1, -1, null, num, 0f, 0f, 0f, 0, 0, 0);
 
 			if (type == ProjectileID.Bomb)
 			{
